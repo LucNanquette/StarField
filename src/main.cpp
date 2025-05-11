@@ -24,40 +24,40 @@ static std::vector<Star> GenerateStars(uint32_t count, float scale, sf::Vector2f
 	sf::Vector2f const viewport_size = screen_size * cf::near;
 	sf::FloatRect const restricted_zone = {-viewport_size * 0.5f, viewport_size * 0.5f};
 
-	// Create randomly distributed stars on the screen
+	// Create randomly distributed stars
 	for (size_t i {count}; i--;)
 	{
 		float const x = (dis(gen) - 0.5f) * screen_size.x * scale;
 		float const y = (dis(gen) - 0.5f) * screen_size.y * scale;
 		float const z = (cf::far - cf::near) * dis(gen) + cf::near;
 
-		// Discard stars that fall into the restricted zone
+		// Discard stars that fall into the restricted zone...
 		if (restricted_zone.contains({x, y}))
 		{
 			++i;
 			continue;
 		}
 
-		// Else add it in the vector
+		// ...otherwise push them into the vector
 		stars.push_back({{x, y}, z});
 	}
 
-	// Depth ordering
-	std::sort(stars.begin(), stars.end(), [](Star const &s_1, Star const &s_2) {
-		return s_1.z > s_2.z;
+	// Order the stars by their z-axis (depth)
+	std::sort(stars.begin(), stars.end(), [](Star const &sA, Star const &sB) {
+		return sA.z > sB.z;
 	});
 
 	return stars;
 }
 
-static void UpdateGeometry(uint32_t idx, Star const &s, sf::VertexArray &va)
+static void UpdateGeometry(uint32_t idx, Star const &star, sf::VertexArray &va)
 {
-	float const scale = 1.0f / s.z;
-	float const depth_ratio = (s.z - cf::near) / (cf::far - cf::near);
+	float const scale = 1.0f / star.z;
+	float const depth_ratio = (star.z - cf::near) / (cf::far - cf::near);
 	float const color_ratio = 1.0f - depth_ratio;
-	auto const c = static_cast<uint8_t>(color_ratio * 255.0f);
+	auto const c = static_cast<uint8_t>(100.0f + color_ratio * 155.0f);
 
-	sf::Vector2f const p = s.position * scale;
+	sf::Vector2f const p = star.position * scale;
 	float const r = cf::size * scale;
 	uint32_t const i = 6 * idx;
 
@@ -79,6 +79,7 @@ static void UpdateGeometry(uint32_t idx, Star const &s, sf::VertexArray &va)
 
 int main()
 {
+	// Create render window
 	auto window = sf::RenderWindow {sf::VideoMode::getDesktopMode(), "Starfield", sf::State::Fullscreen};
 	window.setVerticalSyncEnabled(false);
 	window.setMouseCursorVisible(false);
@@ -88,9 +89,14 @@ int main()
 
 	// Load the star texture and generate a mipmap
 	sf::Texture texture;
-	if (!texture.loadFromFile("res/star.png"))	throw std::runtime_error("Failed to load texture");
+	if (!texture.loadFromFile("res/star3.png"))	throw std::runtime_error("Failed to load texture");
 	if (!texture.generateMipmap()) throw std::runtime_error("Failed to generate mipmap");
 	texture.setSmooth(true);
+
+	// Configure render states, move the origin (0,0) to the screen center
+	sf::RenderStates states;
+	states.transform.translate(screen_size * 0.5f);
+	states.texture = &texture;
 
 	// Load font, used to display FPS
 	sf::Font font;
@@ -117,9 +123,9 @@ int main()
 	sf::Text fpsCounter {font, "", 16}; // String used to display the current FPS
 	fpsCounter.setFillColor(sf::Color::Yellow);
 	fpsCounter.setPosition(sf::Vector2f(10, 10));
-	float frameCount {0.0f}; // Counter for frames used in calculation for FPS
-	float sT {0.0f};         // Sum of frame times used in calculation for FPS
-	float dT {0.0f};	  	   // Frame time
+	float frameCount {0.0f};
+	float sT {0.0f};
+	float dT {0.0f};
 
 	// Initialize the clock before getting into the main loop
 	sf::Clock dClock;
@@ -140,6 +146,7 @@ int main()
 					case sf::Keyboard::Key::Escape:
 						window.close();
 						break;
+
 					default:
 						break;
 				}
@@ -149,40 +156,34 @@ int main()
 		// Update the stars on their z-axis, aka move the stars towards the viewer
 		for (uint32_t i {cf::star_total}; i--;)
 		{
-			Star &s = stars[i];
-			s.z -= cf::speed * dT;
-			if (s.z < cf::near)
+			Star &star = stars[i];
+			star.z -= cf::speed * dT;
+			if (star.z < cf::near)
 			{
-				s.z = cf::far - (cf::near - s.z);
+				star.z = cf::far - (cf::near - star.z);
 				first = i;
 			}
 		}
 
-		// Rendering
-		window.clear();
-
 		for (uint32_t i {0}; i < cf::star_total; ++i)
 		{
 			uint32_t const idx = (i + first) % cf::star_total;
-			Star const &s = stars[idx];
-			UpdateGeometry(i, s, va);
+			Star const &star = stars[idx];
+			UpdateGeometry(i, star, va);
 		}
 
-		sf::RenderStates states;
-		states.transform.translate(screen_size * 0.5f);
-		states.texture = &texture;
-
+		// Rendering
+		window.clear();
 		window.draw(va, states);
-		if(cf::show_fps) window.draw(fpsCounter);
-
+		if (cf::show_fps) window.draw(fpsCounter);
 		window.display();
 
-		// Get frame time
+		// Get frame time and reset the clock to 0
 		dT = dClock.restart().asSeconds();
 
-		if(cf::show_fps)
+		if (cf::show_fps)
 		{
-			// Update the FPS counter
+			// Sum up frame times and number of frames over 500 ms, then display the average FPS per frame
 			sT += dT;
 			frameCount++;
 

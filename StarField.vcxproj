@@ -25,10 +25,12 @@
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="res\star.png" />
+    <Font Include="res\Typewriter.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <Font Include="res\Typewriter.ttf" />
+    <Image Include="res\star1.png" />
+    <Image Include="res\star2.png" />
+    <Image Include="res\star3.png" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
