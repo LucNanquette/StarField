@@ -22,9 +22,9 @@ static std::vector<Star> GenerateStars(uint32_t count, float scale, sf::Vector2f
 
 	// Define a restricted zone to prevent stars from just disappearing in front of view
 	sf::Vector2f const viewport_size = screen_size * cf::near;
-	sf::FloatRect const restricted_zone = {-viewport_size * 0.5f, viewport_size * 0.5f};
+	sf::FloatRect const restricted_zone = {{(-viewport_size.x/2), (-viewport_size.y/2)}, viewport_size};
 
-	// Create randomly distributed stars
+		// Create randomly distributed stars
 	for (size_t i {count}; i--;)
 	{
 		float const x = (dis(gen) - 0.5f) * screen_size.x * scale;
