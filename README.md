@@ -47,10 +47,10 @@ StarField is a high-performance graphical simulation that displays thousands of 
 
 ## Credits
 
-- Developed by LucNanquette.
 - Uses [SFML](https://www.sfml-dev.org/) for graphics and window management.
 
 ---
 
 Feel free to fork and experiment with the code to create your own visual effects!
+
 PS: This description was generated using CoPilot 
