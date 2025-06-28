@@ -14,7 +14,7 @@ StarField is a high-performance graphical simulation that displays thousands of 
 - Stars are randomly generated in 3D space and projected onto the 2D screen.
 - As time progresses, stars move closer to the viewer, simulating depth and motion.
 - When a star passes the viewer, it is recycled to the far plane, creating an endless effect.
-- Each star is drawn as a textured quad (square) using a star image and rendered with a single draw call for maximum efficiency.
+- Each star is drawn as a textured square (built using two triangle primitives) and rendered with a single draw call for maximum efficiency.
 
 ## Requirements
 

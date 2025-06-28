@@ -81,7 +81,7 @@ int main()
 {
 	// Create render window
 	auto window = sf::RenderWindow{ sf::VideoMode::getDesktopMode(), "Starfield", sf::State::Fullscreen };
-	window.setVerticalSyncEnabled(true);
+	window.setVerticalSyncEnabled(false);
 	window.setMouseCursorVisible(false);
 
 	// Get screen size
