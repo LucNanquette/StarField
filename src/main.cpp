@@ -128,14 +128,14 @@ int main()
 	float dT{ 0.0f };
 
 	// Initialize the clock before getting into the main loop
+	// The clock start when it is contructed
 	sf::Clock dClock;
-	dClock.start();
 
 	// Main loop
 	uint32_t first = 0;
 	while (window.isOpen())
 	{
-		// Eventhandler
+		// Event handler
 		while (std::optional event = window.pollEvent())
 		{
 			if (event->is<sf::Event::Closed>()) window.close();
