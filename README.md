@@ -1,6 +1,7 @@
 # StarField
 
-StarField is a high-performance graphical simulation that displays thousands of moving stars, creating a mesmerizing starfield effect. Built with [SFML 3.0](https://www.sfml-dev.org/), it leverages hardware acceleration and efficient rendering using `sf::VertexArray` to animate up to 100,000 stars in real-time.
+StarField is a high-performance graphical simulation that displays thousands of moving stars, creating a mesmerizing starfield effect.
+Built with [SFML 3.0](https://www.sfml-dev.org/), it leverages hardware acceleration and efficient rendering using `sf::VertexArray` to animate up to 100,000 stars in real-time.
 
 ## Features
 
