@@ -50,6 +50,7 @@ static std::vector<Star> GenerateStars(uint32_t count, float scale, sf::Vector2f
 	return stars;
 }
 
+// Update the geometry of a star in the vertex array
 static void UpdateGeometry(uint32_t idx, Star const& star, sf::VertexArray& va)
 {
 	float const scale = 1.0f / star.z;
@@ -165,6 +166,7 @@ int main()
 			}
 		}
 
+		// Update the geometry of each star in the vertex array
 		for (uint32_t i{ 0 }; i < cf::star_total; ++i)
 		{
 			uint32_t const idx = (i + first) % cf::star_total;
